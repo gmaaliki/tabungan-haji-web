@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login | BSI Hajj Online</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#ffdbcd",
+                    "on-surface-variant": "#3d4948",
+                    "inverse-surface": "#27313f",
+                    "outline-variant": "#bcc9c7",
+                    "on-secondary-fixed-variant": "#633f00",
+                    "secondary-fixed-dim": "#ffb956",
+                    "surface-container-high": "#dee9fc",
+                    "on-tertiary": "#ffffff",
+                    "surface-dim": "#d0dbed",
+                    "surface-bright": "#f8f9ff",
+                    "primary-fixed": "#7df6ef",
+                    "on-tertiary-fixed": "#360f00",
+                    "tertiary": "#974723",
+                    "surface": "#f8f9ff",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#d77950",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#5dd9d2",
+                    "secondary-container": "#feb241",
+                    "surface-container-low": "#eff4ff",
+                    "surface-tint": "#006a66",
+                    "on-primary-fixed-variant": "#00504d",
+                    "on-secondary-fixed": "#2a1800",
+                    "tertiary-fixed-dim": "#ffb597",
+                    "on-secondary-container": "#6e4600",
+                    "secondary": "#835400",
+                    "surface-variant": "#d9e3f6",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed": "#ffddb5",
+                    "error-container": "#ffdad6",
+                    "outline": "#6d7a78",
+                    "background": "#f8f9ff",
+                    "on-primary-container": "#00312f",
+                    "on-background": "#121c2a",
+                    "on-primary-fixed": "#00201e",
+                    "on-surface": "#121c2a",
+                    "primary": "#006a66",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-container-highest": "#d9e3f6",
+                    "inverse-primary": "#5dd9d2",
+                    "on-tertiary-container": "#501900",
+                    "on-tertiary-fixed-variant": "#79310d",
+                    "primary-container": "#00a39d",
+                    "surface-container": "#e6eeff",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sidebar-width": "280px",
+                    "unit": "8px",
+                    "stack-lg": "24px",
+                    "stack-md": "16px",
+                    "gutter": "24px",
+                    "margin-desktop": "40px",
+                    "container-max": "1440px",
+                    "stack-sm": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Outfit"],
+                    "body-sm": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Outfit"],
+                    "display-lg": ["Outfit"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .islamic-pattern {
+            background-color: #f8f9ff;
+            background-image: url("https://www.transparenttextures.com/patterns/arabesque.png");
+            background-repeat: repeat;
+            opacity: 0.4;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center relative overflow-hidden font-body-md text-on-surface">
+<!-- Background Pattern Layer -->
+<div class="absolute inset-0 islamic-pattern pointer-events-none"></div>
+<!-- Decorative Gradients for Depth -->
+<div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-primary-container/5 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] bg-secondary-container/5 rounded-full blur-[120px] pointer-events-none"></div>
+<main class="relative z-10 w-full max-w-[480px] px-gutter">
+<!-- Logo Section -->
+<div class="flex flex-col items-center mb-stack-lg animate-in fade-in slide-in-from-bottom-4 duration-700">
+<div class="mb-4">
+<img alt="BSI Logo" class="h-12 w-auto object-contain" data-alt="A clean, professional bank logo for BSI Bank Syariah Indonesia, rendered in a crisp vector format. The logo features a modern, corporate aesthetic with Brand Teal accents, set against a pristine white background. The image is bright and high-key, conveying a sense of institutional trust, security, and digital-first banking reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWKrc6VabEMu71Zg7aR0kRrMxxX5ehHzPIA7B8B-lgNpwg9rM8qoOafInWyQXZfYc2JZqI09gd7LfaRDioCIo1OqnSD8NYgm_vnF9pqcUm0ZUDjNTlpOCbMdQXEDWbB_3LuN3ocj0TVwebFfBfeOfsHmPwS6VNWGEE7EQhJBRT2KMoX8dkQ9aUDoEKp0Snk09kCvawVZunWmmROs-qu429-8ycJTaq703FyS11vBR4rOjVl0pR70U9bdNgRLWoA5UZ5HvMNSnRhck"/>
+</div>
+<h1 class="font-headline-md text-headline-md text-primary text-center">BSI Hajj Online</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 text-center">Institutional Portal for Digital Pilgrimage Management</p>
+</div>
+<!-- Login Card -->
+<div class="glass-card p-margin-desktop rounded-xl border border-outline-variant shadow-[0px_4px_20px_rgba(0,0,0,0.05)] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+<form class="space-y-stack-md" id="loginForm">
+<!-- Email/HP Input -->
+<div class="space-y-2">
+<label class="block font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="identifier">Email or Phone Number</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">person</span>
+<input class="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-lg font-body-md focus:ring-2 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-outline-variant" id="identifier" name="identifier" placeholder="example@domain.com" required="" type="text"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="block font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="password">Password</label>
+<a class="font-label-md text-label-md text-primary hover:underline transition-all" href="#">Forgot Password?</a>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">lock</span>
+<input class="w-full pl-10 pr-12 py-3 bg-white border border-outline-variant rounded-lg font-body-md focus:ring-2 focus:ring-primary/10 focus:border-primary outline-none transition-all placeholder:text-outline-variant" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface-variant transition-colors p-1" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined" id="eyeIcon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me & Policy -->
+<div class="flex items-center gap-3 py-2">
+<input class="w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary/20 transition-all cursor-pointer" id="remember" name="remember" type="checkbox"/>
+<label class="font-body-sm text-body-sm text-on-surface-variant cursor-pointer select-none" for="remember">Keep me logged in on this device</label>
+</div>
+<!-- Primary Action -->
+<button class="w-full py-4 bg-primary-container text-white font-title-lg text-title-lg rounded-lg hover:brightness-110 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-primary-container/20 flex items-center justify-center gap-2" type="submit">
+<span>Login to Portal</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<!-- Registration Link -->
+<div class="pt-stack-md text-center">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Don't have an account yet? 
+                        <a class="text-primary font-semibold hover:underline decoration-2 underline-offset-4 ml-1 transition-all" href="#">Register Here</a>
+</p>
+</div>
+</form>
+</div>
+<!-- Footer Links -->
+<footer class="mt-stack-lg flex flex-col items-center gap-4 animate-in fade-in duration-1000 delay-500">
+<div class="flex items-center gap-6">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Help Center</a>
+</div>
+<p class="font-label-md text-label-md text-outline">© 2024 Bank Syariah Indonesia. All Rights Reserved.</p>
+</footer>
+</main>
+<script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.textContent = 'visibility_off';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.textContent = 'visibility';
+            }
+        }
+
+        // Simple form handling
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+            
+            // Loading state
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Authenticating...';
+            
+            setTimeout(() => {
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Welcome';
+                btn.classList.replace('bg-primary-container', 'bg-green-600');
+                
+                // Simulate redirect
+                setTimeout(() => {
+                    // Logic for redirection would go here
+                    alert('Login successful! Redirecting to Dashboard...');
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                    btn.classList.replace('bg-green-600', 'bg-primary-container');
+                }, 1000);
+            }, 1500);
+        });
+
+        // Background floating elements for atmosphere
+        function createOrb() {
+            const orb = document.createElement('div');
+            orb.className = 'absolute rounded-full bg-primary-container/10 blur-xl pointer-events-none transition-all duration-7000';
+            const size = Math.random() * 100 + 50 + 'px';
+            orb.style.width = size;
+            orb.style.height = size;
+            orb.style.left = Math.random() * 100 + '%';
+            orb.style.top = Math.random() * 100 + '%';
+            document.body.appendChild(orb);
+            
+            setTimeout(() => {
+                orb.style.opacity = '0';
+                setTimeout(() => orb.remove(), 1000);
+            }, 6000);
+        }
+
+        setInterval(createOrb, 4000);
+    </script>
+</body></html>

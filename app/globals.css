@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8f9ff;
+  --foreground: #121c2a;
 }
 
 @theme inline {
@@ -10,17 +10,106 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+  --font-inter: var(--inter-font, Inter, sans-serif);
+  --font-outfit: var(--outfit-font, Outfit, sans-serif);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Material Design 3 — Color Palette */
+  --color-primary: #006a66;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #00a39d;
+  --color-on-primary-container: #00312f;
+  --color-primary-fixed: #7df6ef;
+  --color-primary-fixed-dim: #5dd9d2;
+  --color-on-primary-fixed: #00201e;
+  --color-on-primary-fixed-variant: #00504d;
+  --color-secondary: #835400;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #feb241;
+  --color-on-secondary-container: #6e4600;
+  --color-secondary-fixed: #ffddb5;
+  --color-secondary-fixed-dim: #ffb956;
+  --color-on-secondary-fixed: #2a1800;
+  --color-on-secondary-fixed-variant: #633f00;
+  --color-tertiary: #974723;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #d77950;
+  --color-on-tertiary-container: #501900;
+  --color-tertiary-fixed: #ffdbcd;
+  --color-tertiary-fixed-dim: #ffb597;
+  --color-on-tertiary-fixed: #360f00;
+  --color-on-tertiary-fixed-variant: #79310d;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-surface: #f8f9ff;
+  --color-on-surface: #121c2a;
+  --color-surface-variant: #d9e3f6;
+  --color-on-surface-variant: #3d4948;
+  --color-surface-container: #e6eeff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container-high: #dee9fc;
+  --color-surface-container-highest: #d9e3f6;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-dim: #d0dbed;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-tint: #006a66;
+  --color-outline: #6d7a78;
+  --color-outline-variant: #bcc9c7;
+  --color-inverse-surface: #27313f;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-inverse-primary: #5dd9d2;
+  --color-on-background: #121c2a;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Material Symbols icon style */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Islamic arabesque pattern overlay */
+.islamic-pattern {
+  background-color: #f8f9ff;
+  background-image: url("https://www.transparenttextures.com/patterns/arabesque.png");
+  background-repeat: repeat;
+  opacity: 0.4;
+}
+
+/* Frosted glass card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+}
+
+/* Entrance animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(1rem); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUpFar {
+  from { opacity: 0; transform: translateY(2rem); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-logo   { animation: fadeInUp    0.7s ease-out both; }
+.animate-card   { animation: fadeInUpFar 1.0s ease-out both; }
+.animate-footer { animation: fadeIn      1.0s ease-out 0.5s both; }
+
+/* Floating orb used by JS in login page */
+@keyframes floatOrb {
+  0%   { opacity: 0; transform: scale(0.8); }
+  20%  { opacity: 1; }
+  80%  { opacity: 0.8; }
+  100% { opacity: 0; transform: scale(1.2); }
 }

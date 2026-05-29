@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BSI Hajj Online - Dashboard Nasabah</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Outfit:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#ffdbcd",
+                    "on-surface-variant": "#3d4948",
+                    "inverse-surface": "#27313f",
+                    "outline-variant": "#bcc9c7",
+                    "on-secondary-fixed-variant": "#633f00",
+                    "secondary-fixed-dim": "#ffb956",
+                    "surface-container-high": "#dee9fc",
+                    "on-tertiary": "#ffffff",
+                    "surface-dim": "#d0dbed",
+                    "surface-bright": "#f8f9ff",
+                    "primary-fixed": "#7df6ef",
+                    "on-tertiary-fixed": "#360f00",
+                    "tertiary": "#974723",
+                    "surface": "#f8f9ff",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#d77950",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#5dd9d2",
+                    "secondary-container": "#feb241",
+                    "surface-container-low": "#eff4ff",
+                    "surface-tint": "#006a66",
+                    "on-primary-fixed-variant": "#00504d",
+                    "on-secondary-fixed": "#2a1800",
+                    "tertiary-fixed-dim": "#ffb597",
+                    "on-secondary-container": "#6e4600",
+                    "secondary": "#835400",
+                    "surface-variant": "#d9e3f6",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed": "#ffddb5",
+                    "error-container": "#ffdad6",
+                    "outline": "#6d7a78",
+                    "background": "#f8f9ff",
+                    "on-primary-container": "#00312f",
+                    "on-background": "#121c2a",
+                    "on-primary-fixed": "#00201e",
+                    "on-surface": "#121c2a",
+                    "primary": "#006a66",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "surface-container-highest": "#d9e3f6",
+                    "inverse-primary": "#5dd9d2",
+                    "on-tertiary-container": "#501900",
+                    "on-tertiary-fixed-variant": "#79310d",
+                    "primary-container": "#00a39d",
+                    "surface-container": "#e6eeff",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sidebar-width": "280px",
+                    "unit": "8px",
+                    "stack-lg": "24px",
+                    "stack-md": "16px",
+                    "gutter": "24px",
+                    "margin-desktop": "40px",
+                    "container-max": "1440px",
+                    "stack-sm": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Outfit"],
+                    "body-sm": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Outfit"],
+                    "display-lg": ["Outfit"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f8f9ff;
+            color: #121c2a;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .sidebar-active-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #006a66;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid #E5E7EB;
+        }
+        .progress-bar-glow {
+            box-shadow: 0 0 12px rgba(0, 163, 157, 0.3);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface border-r border-outline-variant flex flex-col py-6 z-50">
+<div class="px-6 mb-10">
+<h1 class="text-headline-lg font-headline-lg font-bold text-primary">BSI Hajj Online</h1>
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-widest mt-1">Institutional Portal</p>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<!-- Dashboard Active -->
+<a class="relative flex items-center gap-3 px-6 py-4 bg-primary-container/10 text-primary group transition-all duration-200" href="#">
+<div class="sidebar-active-bar"></div>
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md font-semibold">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-4 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-body-md text-body-md">Transactions</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-4 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="mosque">mosque</span>
+<span class="font-body-md text-body-md">Hajj Eligibility</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-4 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-4 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full py-3 bg-secondary-container text-on-secondary-container font-semibold rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                New Deposit
+            </button>
+<div class="mt-6 pt-6 border-t border-outline-variant">
+<a class="flex items-center gap-3 text-on-surface-variant hover:text-error transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-md text-body-md">Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[280px] min-h-screen flex flex-col">
+<!-- TopNavBar Shell -->
+<header class="fixed top-0 right-0 z-40 flex justify-between items-center h-16 px-gutter ml-[280px] w-[calc(100%-280px)] bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+<div class="flex items-center flex-1 max-w-md">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-1.5 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-body-sm font-body-sm" placeholder="Search transactions or info..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="h-8 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-body-sm font-semibold leading-tight">Ahmad Fauzi</p>
+<p class="text-label-md font-label-md text-on-surface-variant">Nasabah Priority</p>
+</div>
+<img alt="User Profile" class="w-10 h-10 rounded-full border-2 border-primary object-cover" data-alt="A professional portrait of a middle-aged Indonesian man named Ahmad Fauzi, wearing a clean white shirt, smiling warmly against a soft-focus office background. The lighting is bright and natural, reflecting a high-trust corporate environment with clean teal and white accents consistent with a modern financial institution's aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvnfi3XuQyLM0BZvpJehlzE6WJuuri_WLlcOVcf12xxohcVn1asxeKseWwBDwRpwdvLBtv2wHetf3L8KdKs6rhfYdD7XGWxOW321RgS4nREulvFQK1YSin8w-MTxQebGosmnWcnm7qr03l6mLjPqAo2FuNtvSORvHreFs_8G7R4pHtj5FFTSQOmfTQvjq-KLHNpjfcVfH3Oym0SGpjx3Huv7eS7zyRAm6LbyCY1RV-fgHPSyMwirOBAnxlDIZlFnSl--ciTSPJyxo"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="mt-16 p-margin-desktop max-w-container-max w-full mx-auto">
+<header class="mb-10">
+<h2 class="text-display-lg font-display-lg text-on-background">Assalamu'alaikum, Ahmad</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Manage your Hajj savings and track your eligibility for the sacred pilgrimage.</p>
+</header>
+<!-- Top Cards Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+<!-- Account Card (7 Columns) -->
+<div class="lg:col-span-7 glass-card rounded-xl p-8 relative overflow-hidden group">
+<!-- Background Pattern -->
+<div class="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-full -mr-20 -mt-20 transition-transform group-hover:scale-110"></div>
+<div class="relative z-10 flex flex-col h-full">
+<div class="flex justify-between items-start mb-6">
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-1">Account Type</p>
+<h3 class="text-headline-md font-headline-md text-primary">BSI Tabungan Haji</h3>
+<p class="text-body-md font-mono text-outline mt-1">Acc. No. 7012345</p>
+</div>
+<span class="material-symbols-outlined text-primary-container text-4xl" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+</div>
+<div class="mt-auto">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Available Balance</p>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-lg font-headline-lg text-on-surface">Rp 15.500.000</span>
+<span class="text-primary font-semibold text-body-sm">+2.4% this month</span>
+</div>
+</div>
+<div class="flex gap-4 mt-8">
+<button class="flex-1 py-3 bg-primary text-white rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined">add</span>
+                                Deposit
+                            </button>
+<button class="flex-1 py-3 border border-outline-variant text-on-surface rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">account_balance</span>
+                                Withdraw
+                            </button>
+</div>
+</div>
+</div>
+<!-- Eligibility Status Card (5 Columns) -->
+<div class="lg:col-span-5 glass-card rounded-xl p-8 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-title-lg font-title-lg">Hajj Eligibility</h3>
+<span class="px-3 py-1 bg-secondary/10 text-secondary text-label-md font-bold rounded-full border border-secondary/20">Belum Eligible</span>
+</div>
+<div class="mb-8">
+<div class="flex justify-between items-end mb-3">
+<span class="text-body-sm font-semibold">Progress to Goal (Rp 25.000.000)</span>
+<span class="text-headline-md font-headline-md text-secondary">62%</span>
+</div>
+<div class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full progress-bar-glow" style="width: 62%"></div>
+</div>
+</div>
+<div class="mt-auto bg-surface-container-low p-4 rounded-lg flex items-start gap-4">
+<span class="material-symbols-outlined text-secondary text-2xl">info</span>
+<div>
+<p class="text-body-sm text-on-surface">You need <span class="font-bold">Rp 9.500.000</span> more to become eligible for Hajj registration.</p>
+<a class="text-primary text-label-md font-bold hover:underline mt-2 inline-block" href="#">View eligibility criteria</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Row: Transactions & Steps -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Transactions Table (8 Columns) -->
+<div class="lg:col-span-8 glass-card rounded-xl p-8">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-title-lg font-title-lg">Recent Transactions</h3>
+<button class="text-primary font-semibold text-body-sm hover:underline flex items-center gap-1">
+                            See All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-outline-variant">
+<th class="pb-4 text-label-md font-label-md text-on-surface-variant uppercase tracking-widest">Date</th>
+<th class="pb-4 text-label-md font-label-md text-on-surface-variant uppercase tracking-widest">Type</th>
+<th class="pb-4 text-label-md font-label-md text-on-surface-variant uppercase tracking-widest">Reference</th>
+<th class="pb-4 text-label-md font-label-md text-on-surface-variant uppercase tracking-widest text-right">Amount</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-4 text-body-md">Oct 24, 2023</td>
+<td class="py-4">
+<span class="flex items-center gap-2 text-body-md font-semibold">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                                            Deposit
+                                        </span>
+</td>
+<td class="py-4 text-body-md text-outline">BSI-TRX-99212</td>
+<td class="py-4 text-body-md font-bold text-primary text-right">+Rp 2.000.000</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-4 text-body-md">Oct 12, 2023</td>
+<td class="py-4">
+<span class="flex items-center gap-2 text-body-md font-semibold">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                                            Deposit
+                                        </span>
+</td>
+<td class="py-4 text-body-md text-outline">BSI-TRX-88219</td>
+<td class="py-4 text-body-md font-bold text-primary text-right">+Rp 1.500.000</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-4 text-body-md">Sep 30, 2023</td>
+<td class="py-4">
+<span class="flex items-center gap-2 text-body-md font-semibold text-secondary">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                                            Auto-Saving
+                                        </span>
+</td>
+<td class="py-4 text-body-md text-outline">BSI-AUT-00122</td>
+<td class="py-4 text-body-md font-bold text-primary text-right">+Rp 500.000</td>
+</tr>
+<tr class="group hover:bg-surface-container-low transition-colors">
+<td class="py-4 text-body-md">Sep 15, 2023</td>
+<td class="py-4">
+<span class="flex items-center gap-2 text-body-md font-semibold">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                                            Deposit
+                                        </span>
+</td>
+<td class="py-4 text-body-md text-outline">BSI-TRX-77610</td>
+<td class="py-4 text-body-md font-bold text-primary text-right">+Rp 10.000.000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Registration Steps (4 Columns) -->
+<div class="lg:col-span-4 glass-card rounded-xl p-8 flex flex-col">
+<h3 class="text-title-lg font-title-lg mb-6">Registration Journey</h3>
+<div class="space-y-6 flex-1">
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-0.5 h-full bg-primary"></div>
+</div>
+<div class="pb-6">
+<p class="text-body-md font-bold">Open Hajj Account</p>
+<p class="text-body-sm text-on-surface-variant">Completed on Jan 12, 2023</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full border-2 border-secondary-container bg-surface text-secondary-container flex items-center justify-center font-bold">
+                                    2
+                                </div>
+<div class="w-0.5 h-full bg-outline-variant"></div>
+</div>
+<div class="pb-6">
+<p class="text-body-md font-bold text-on-surface">Reach Initial Deposit</p>
+<p class="text-body-sm text-on-surface-variant">Min. Rp 25.000.000 required</p>
+<div class="mt-2 inline-flex items-center gap-2 px-2 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded">In Progress</div>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-8 h-8 rounded-full border-2 border-outline-variant bg-surface text-outline flex items-center justify-center font-bold">
+                                    3
+                                </div>
+<div class="w-0.5 h-full opacity-0"></div>
+</div>
+<div>
+<p class="text-body-md font-bold text-outline">Validation &amp; SPPH</p>
+<p class="text-body-sm text-on-surface-variant">Register to Ministry of Religion</p>
+</div>
+</div>
+</div>
+<div class="mt-8">
+<img alt="Kaaba Mecca" class="w-full h-32 object-cover rounded-lg" data-alt="A breathtaking, wide-angle cinematic shot of the Holy Kaaba in Mecca during a quiet morning. The sky is a pale blue and golden sunlight softly illuminates the pristine white marble courtyard. The atmosphere is profoundly spiritual, serene, and majestic. The colors are dominated by the deep black of the Kaaba, bright white marble, and a hint of gold, aligning with a premium corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvv5bjHMdslvCVoYP-yhWi1Y7QywFRnG9ltMxux3dS0pQCqt5e-e31DuR4F1dKHWhjs-rg4QAMnjJP4ZkAO1Qgvsh-Ly1sJt_g8W9q3ghyWg1dwYPdOkBh5id1PrdPF69-VjehcDENcr7YL_SywAiZJLnhCnvrVPo8K5QpZl515qlPI9j36ificKwvIfHHoAv6BnPKLSG3lYPE10ttMWTncScct-t3tOL8Gp1ETRY28VNpdw2cxASe5s3LyLLvFrvni31LR1J-vSk"/>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action for Quick Assistance -->
+<button class="fixed bottom-10 right-10 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 group">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<span class="absolute right-full mr-4 px-3 py-1.5 bg-inverse-surface text-inverse-on-surface rounded text-label-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Chat with Hajj Specialist</span>
+</button>
+<script>
+        // Smooth hover effect for cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.boxShadow = '0px 10px 30px rgba(0, 106, 102, 0.08)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body></html>
