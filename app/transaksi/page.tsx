@@ -6,6 +6,7 @@ import { TopNav } from "@/component/topnav"
 import {
     getMe,
     getMutasi,
+    downloadLaporanSaya,
     formatRupiah,
     formatDate,
     toNumber,
@@ -30,6 +31,31 @@ export default function TransaksiPage() {
     const [error, setError] = useState<string | null>(null)
     const [tahun, setTahun] = useState(CURRENT_YEAR)
     const [bulan, setBulan] = useState(0)
+    const [downloading, setDownloading] = useState(false)
+
+    async function handleDownload() {
+        const token = localStorage.getItem("token")
+        if (!token || !tabungan) return
+        setDownloading(true)
+        try {
+            const params: { tahun?: number; bulan?: number } = { tahun }
+            if (bulan > 0) params.bulan = bulan
+            const blob = await downloadLaporanSaya(token, tabungan.id, params)
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.href = url
+            const bulanLabel = bulan > 0 ? `-${MONTHS[bulan - 1]}` : ""
+            a.download = `mutasi-${tabungan.nomorRekening}-${tahun}${bulanLabel}.csv`
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+            URL.revokeObjectURL(url)
+        } catch (err: unknown) {
+            alert(err instanceof Error ? err.message : "Gagal mengunduh laporan")
+        } finally {
+            setDownloading(false)
+        }
+    }
 
     const fetchMutasi = useCallback(async (token: string, tabId: string, t: number, b: number) => {
         setFetching(true)
@@ -93,6 +119,20 @@ export default function TransaksiPage() {
                                 </p>
                             )}
                         </div>
+                        {tabungan && (
+                            <button
+                                onClick={handleDownload}
+                                disabled={downloading || transaksi.length === 0}
+                                className="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-lg font-semibold text-sm hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50"
+                            >
+                                {downloading ? (
+                                    <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                                ) : (
+                                    <span className="material-symbols-outlined text-[18px]">download</span>
+                                )}
+                                Unduh CSV
+                            </button>
+                        )}
                     </header>
 
                     {/* Summary cards */}

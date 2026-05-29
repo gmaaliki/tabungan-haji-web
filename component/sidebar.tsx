@@ -9,6 +9,7 @@ const NAV = [
     { href: "/setoran", icon: "add_circle", label: "Setoran" },
     { href: "/penarikan", icon: "payments", label: "Penarikan" },
     { href: "/eligibility", icon: "mosque", label: "Hajj Eligibility" },
+    { href: "/settings", icon: "settings", label: "Pengaturan" },
 ]
 
 export function Sidebar() {

@@ -144,22 +144,114 @@ export async function postPenarikan(
     return json.data?.transaksi ?? json.data
 }
 
-/** GET /api/v1/laporan/transaksi?tahun=&bulan= (Admin only; nasabah will get 403) */
-export async function downloadLaporan(
-    token: string,
-    params: { tahun?: number; bulan?: number } = {}
-): Promise<Blob> {
-    const q = new URLSearchParams()
-    if (params.tahun) q.set("tahun", String(params.tahun))
-    if (params.bulan) q.set("bulan", String(params.bulan))
-    const res = await fetch(`${API_URL}/laporan/transaksi?${q}`, {
-        headers: { Authorization: `Bearer ${token}` },
-    })
+async function fetchCsv(url: string, token: string): Promise<Blob> {
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
     if (!res.ok) {
         const json = await res.json().catch(() => ({}))
         throw apiError(json as Record<string, unknown>, "Gagal mengunduh laporan", res.status)
     }
     return res.blob()
+}
+
+function periodeQuery(params: { tahun?: number; bulan?: number }) {
+    const q = new URLSearchParams()
+    if (params.tahun) q.set("tahun", String(params.tahun))
+    if (params.bulan) q.set("bulan", String(params.bulan))
+    return q.toString()
+}
+
+/** GET /api/v1/laporan/transaksi/saya/:tabunganId — nasabah's own CSV */
+export function downloadLaporanSaya(token: string, tabunganId: string, params: { tahun?: number; bulan?: number } = {}): Promise<Blob> {
+    return fetchCsv(`${API_URL}/laporan/transaksi/saya/${tabunganId}?${periodeQuery(params)}`, token)
+}
+
+/** GET /api/v1/laporan/transaksi/tabungan/:tabunganId — admin per-rekening CSV */
+export function downloadLaporanTabungan(token: string, tabunganId: string, params: { tahun?: number; bulan?: number } = {}): Promise<Blob> {
+    return fetchCsv(`${API_URL}/laporan/transaksi/tabungan/${tabunganId}?${periodeQuery(params)}`, token)
+}
+
+/** GET /api/v1/laporan/transaksi — admin all-transactions CSV */
+export function downloadLaporanSemua(token: string, params: { tahun?: number; bulan?: number } = {}): Promise<Blob> {
+    return fetchCsv(`${API_URL}/laporan/transaksi?${periodeQuery(params)}`, token)
+}
+
+// --- Buka rekening & profil ---
+
+/** POST /api/v1/tabungan-haji — open a new hajj savings account */
+export async function bukaRekening(token: string): Promise<TabunganSummary> {
+    const res = await fetch(`${API_URL}/tabungan-haji`, { method: "POST", headers: authHeaders(token) })
+    const json = await res.json()
+    if (!res.ok) throw apiError(json, "Gagal membuka rekening", res.status)
+    return json.data
+}
+
+/** PATCH /api/v1/nasabah/:id — update nasabah profile (nama, email, nomorHp) */
+export async function updateNasabah(token: string, nasabahId: string, data: { nama?: string; email?: string; nomorHp?: string }): Promise<void> {
+    const res = await fetch(`${API_URL}/nasabah/${nasabahId}`, {
+        method: "PATCH",
+        headers: authHeaders(token),
+        body: JSON.stringify(data),
+    })
+    const json = await res.json()
+    if (!res.ok) throw apiError(json, "Gagal memperbarui profil", res.status)
+}
+
+/** PATCH /api/v1/tabungan-haji/:id/tanggal-daftar — set hajj registration date (requires eligible) */
+export async function setTanggalDaftar(token: string, tabunganId: string, tanggalDaftarHaji: string): Promise<void> {
+    const res = await fetch(`${API_URL}/tabungan-haji/${tabunganId}/tanggal-daftar`, {
+        method: "PATCH",
+        headers: authHeaders(token),
+        body: JSON.stringify({ tanggalDaftarHaji }),
+    })
+    const json = await res.json()
+    if (!res.ok) throw apiError(json, "Gagal menetapkan tanggal daftar haji", res.status)
+}
+
+// --- Admin ---
+
+/** GET /api/v1/nasabah — admin: all nasabah */
+export async function getAllNasabah(token: string): Promise<{ total: number; data: NasabahRow[] }> {
+    const res = await fetch(`${API_URL}/nasabah`, { headers: authHeaders(token) })
+    const json = await res.json()
+    if (!res.ok) throw apiError(json, "Gagal memuat nasabah", res.status)
+    return { total: json.total ?? json.data?.length ?? 0, data: json.data }
+}
+
+/** DELETE /api/v1/nasabah/:id — admin: soft-delete nasabah */
+export async function deleteNasabah(token: string, nasabahId: string): Promise<void> {
+    const res = await fetch(`${API_URL}/nasabah/${nasabahId}`, { method: "DELETE", headers: authHeaders(token) })
+    if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        throw apiError(json as Record<string, unknown>, "Gagal menghapus nasabah", res.status)
+    }
+}
+
+/** GET /api/v1/tabungan-haji — admin: all rekening with nasabah */
+export async function getAllTabungan(token: string): Promise<{ total: number; data: TabunganWithNasabah[] }> {
+    const res = await fetch(`${API_URL}/tabungan-haji`, { headers: authHeaders(token) })
+    const json = await res.json()
+    if (!res.ok) throw apiError(json, "Gagal memuat rekening", res.status)
+    return { total: json.total ?? json.data?.length ?? 0, data: json.data }
+}
+
+/** PATCH /api/v1/tabungan-haji/:id/status — admin: change rekening status */
+export async function updateStatusRekening(token: string, tabunganId: string, status: "AKTIF" | "DORMANT" | "TUTUP"): Promise<void> {
+    const res = await fetch(`${API_URL}/tabungan-haji/${tabunganId}/status`, {
+        method: "PATCH",
+        headers: authHeaders(token),
+        body: JSON.stringify({ status }),
+    })
+    const json = await res.json()
+    if (!res.ok) throw apiError(json, "Gagal mengubah status", res.status)
+}
+
+/** DELETE /api/v1/tabungan-haji/:id — admin: delete empty rekening */
+export async function deleteRekening(token: string, tabunganId: string): Promise<void> {
+    const res = await fetch(`${API_URL}/tabungan-haji/${tabunganId}`, { method: "DELETE", headers: authHeaders(token) })
+    if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        throw apiError(json as Record<string, unknown>, "Gagal menghapus rekening", res.status)
+    }
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -190,10 +282,35 @@ export type TabunganSummary = {
 export type Tabungan = TabunganSummary
 
 export type Estimasi = {
+    nomorRekening: string
+    status: "AKTIF" | "DORMANT" | "TUTUP"
+    tanggalDaftarHaji: string | null
     eligible: boolean
+    saldo: number | string
+    setoranAwal: number | string
+    kurang: number | string
+    masaTungguTahun: number
     tahunPerkiraan: number | null
-    kekurangan?: number | string
-    saldo?: number | string
+    keterangan: string
+}
+
+export type NasabahRow = {
+    id: string
+    nik: string
+    nama: string
+    email: string
+    nomorHp: string
+    createdAt: string
+}
+
+export type TabunganWithNasabah = TabunganSummary & {
+    nasabah: {
+        id: string
+        nik: string
+        nama: string
+        email: string
+        nomorHp: string
+    }
 }
 
 export type Transaksi = {

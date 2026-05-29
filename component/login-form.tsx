@@ -60,13 +60,26 @@ export function LoginForm() {
         return;
       }
 
-      if (data.data?.token) {
-        localStorage.setItem("token", data.data.token);
+      const token = data.data?.token;
+      if (token) {
+        localStorage.setItem("token", token);
+      }
+
+      // Determine destination by role
+      let destination = "/dashboard";
+      try {
+        const meRes = await fetch(`${apiUrl}/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const me = await meRes.json();
+        if (me.data?.role === "ADMIN") destination = "/admin";
+      } catch {
+        // fall back to dashboard
       }
 
       setStatus("success");
       setTimeout(() => {
-        window.location.href = "/dashboard";
+        window.location.href = destination;
       }, 1000);
     } catch {
       setError("Koneksi gagal. Pastikan server API berjalan.");

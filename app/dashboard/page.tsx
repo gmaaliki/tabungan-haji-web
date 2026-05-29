@@ -8,6 +8,7 @@ import {
     getMe,
     getEstimasi,
     getMutasi,
+    bukaRekening,
     formatRupiah,
     formatDate,
     toNumber,
@@ -27,6 +28,20 @@ export default function DashboardPage() {
     const [transaksi, setTransaksi] = useState<Transaksi[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [opening, setOpening] = useState(false)
+
+    async function handleBukaRekening() {
+        const token = localStorage.getItem("token")
+        if (!token) { router.replace("/login"); return }
+        setOpening(true)
+        try {
+            await bukaRekening(token)
+            window.location.reload()
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Gagal membuka rekening")
+            setOpening(false)
+        }
+    }
 
     useEffect(() => {
         const token = localStorage.getItem("token")
@@ -63,7 +78,7 @@ export default function DashboardPage() {
     const nasabah = me.nasabah
     const saldo = toNumber(tabungan?.saldo)
     const progress = Math.min(100, Math.round((saldo / SETORAN_MINIMUM) * 100))
-    const kekurangan = estimasi ? toNumber(estimasi.kekurangan) : Math.max(0, SETORAN_MINIMUM - saldo)
+    const kekurangan = estimasi ? toNumber(estimasi.kurang) : Math.max(0, SETORAN_MINIMUM - saldo)
     const eligible = estimasi?.eligible ?? saldo >= SETORAN_MINIMUM
     const firstName = nasabah?.nama.split(" ")[0] ?? "Nasabah"
 
@@ -97,7 +112,12 @@ export default function DashboardPage() {
                             <p className="text-on-surface-variant mb-6">
                                 Buka rekening tabungan haji untuk mulai menabung menuju tanah suci.
                             </p>
-                            <button className="px-8 py-3 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary/90 transition-all">
+                            <button
+                                onClick={handleBukaRekening}
+                                disabled={opening}
+                                className="px-8 py-3 bg-primary text-on-primary rounded-lg font-semibold hover:bg-primary/90 transition-all disabled:opacity-60 inline-flex items-center gap-2"
+                            >
+                                {opening && <span className="material-symbols-outlined animate-spin text-[20px]">progress_activity</span>}
                                 Buka Rekening Sekarang
                             </button>
                         </div>
