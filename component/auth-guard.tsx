@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Props = {
@@ -10,27 +10,18 @@ type Props = {
   children: React.ReactNode;
 };
 
-// External store hooks for `localStorage.token`. Using useSyncExternalStore
-// instead of useState + useEffect avoids hydration mismatches (server has no
-// localStorage) and reactively picks up cross-tab logout via the storage event.
-
-function subscribe(callback: () => void) {
-  window.addEventListener("storage", callback);
-  return () => window.removeEventListener("storage", callback);
-}
-
-function readToken(): string | null {
-  return localStorage.getItem("token");
-}
-
-function readTokenSsr(): string | null {
-  return null;
-}
+type Status = "checking" | "authed" | "unauthed";
 
 /**
  * Client-side route guard: checks `localStorage.token` on mount and redirects
  * unauthenticated visitors to `/login`. Children render only once the token
  * is confirmed present.
+ *
+ * The setState-in-effect pattern below is intentional: we cannot read
+ * localStorage during render (SSR has no `window`), so the check must run
+ * after mount. The first render unconditionally returns the fallback, so
+ * there is never a hydration flash and no redirect fires before the real
+ * client-side check completes.
  *
  * Pair with the `api` object in `lib/api/client.ts` — that wrapper does
  * server-side 401 detection and auto-redirects when the token is expired.
@@ -41,14 +32,21 @@ export function AuthGuard({
   children,
 }: Props) {
   const router = useRouter();
-  const token = useSyncExternalStore(subscribe, readToken, readTokenSsr);
-  const ready = token !== null && token !== "";
+  const [status, setStatus] = useState<Status>("checking");
 
   useEffect(() => {
-    if (!ready) router.replace(redirectTo);
-  }, [ready, router, redirectTo]);
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (!token) {
+      router.replace(redirectTo);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setStatus("unauthed");
+      return;
+    }
+    setStatus("authed");
+  }, [router, redirectTo]);
 
-  if (!ready) {
+  if (status !== "authed") {
     return (
       fallback ?? (
         <div className="flex items-center justify-center min-h-screen bg-background">
