@@ -8,6 +8,7 @@ const NAV = [
     { href: "/admin/nasabah", icon: "groups", label: "Data Nasabah" },
     { href: "/admin/rekening", icon: "account_balance", label: "Rekening Haji" },
     { href: "/admin/laporan", icon: "description", label: "Laporan" },
+    { href: "/admin/staff", icon: "shield_person", label: "Akun Staf" },
 ]
 
 export function AdminSidebar() {

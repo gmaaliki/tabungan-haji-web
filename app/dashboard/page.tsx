@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Sidebar } from "@/component/sidebar"
 import { TopNav } from "@/component/topnav"
+import { AuthGuard } from "@/component/auth-guard"
+import { HealthStatus } from "@/component/health-status"
 import {
     getMe,
     getEstimasi,
@@ -11,6 +13,7 @@ import {
     bukaRekening,
     formatRupiah,
     formatDate,
+    maskNomorRekening,
     toNumber,
     getTabunganFromMe,
     SETORAN_MINIMUM,
@@ -20,7 +23,15 @@ import {
     type Transaksi,
 } from "@/lib/api"
 
-export default function DashboardPage() {
+export default function DashboardPageWrapper() {
+    return (
+        <AuthGuard>
+            <DashboardPage />
+        </AuthGuard>
+    )
+}
+
+function DashboardPage() {
     const router = useRouter()
     const [me, setMe] = useState<Me | null>(null)
     const [tabungan, setTabungan] = useState<TabunganSummary | null>(null)
@@ -91,13 +102,18 @@ export default function DashboardPage() {
                 <div className="p-10 max-w-[1440px] mx-auto">
 
                     {/* Header */}
-                    <header className="mb-10">
-                        <h2 className="font-outfit text-4xl font-bold text-on-background">
-                            Assalamu&apos;alaikum, {firstName}
-                        </h2>
-                        <p className="text-lg text-on-surface-variant mt-1">
-                            Manage your Hajj savings and track your eligibility for the sacred pilgrimage.
-                        </p>
+                    <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                        <div>
+                            <h2 className="font-outfit text-4xl font-bold text-on-background">
+                                Assalamu&apos;alaikum, {firstName}
+                            </h2>
+                            <p className="text-lg text-on-surface-variant mt-1">
+                                Manage your Hajj savings and track your eligibility for the sacred pilgrimage.
+                            </p>
+                        </div>
+                        <div className="w-full md:w-auto md:min-w-[320px]">
+                            <HealthStatus />
+                        </div>
                     </header>
 
                     {/* No rekening state */}
@@ -134,7 +150,7 @@ export default function DashboardPage() {
                                             <div>
                                                 <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1">Account Type</p>
                                                 <h3 className="font-outfit text-2xl font-semibold text-primary">BSI Tabungan Haji</h3>
-                                                <p className="text-sm font-mono text-outline mt-1">Acc. No. {tabungan.nomorRekening}</p>
+                                                <p className="text-sm font-mono text-outline mt-1" title={tabungan.nomorRekening}>Acc. No. {maskNomorRekening(tabungan.nomorRekening)}</p>
                                             </div>
                                             <span className="material-symbols-outlined text-primary-container text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                                                 account_balance_wallet

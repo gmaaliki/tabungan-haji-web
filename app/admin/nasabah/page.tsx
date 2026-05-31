@@ -3,25 +3,38 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { AdminSidebar } from "@/component/admin-sidebar"
 import { TopNav } from "@/component/topnav"
+import { NasabahRow } from "@/component/admin/nasabah-row"
 import {
+    ApiError,
     getMe,
     getAllNasabah,
     deleteNasabah,
-    formatDate,
-    type NasabahRow,
+    postRegister,
+    type NasabahRow as NasabahRowData,
 } from "@/lib/api"
 
 type PageState = "loading" | "ready" | "error"
 
+const EMPTY_FORM = { nik: "", nama: "", email: "", nomorHp: "", password: "" }
+type FormState = typeof EMPTY_FORM
+
 export default function AdminNasabahPage() {
     const router = useRouter()
     const [adminName, setAdminName] = useState("")
-    const [nasabah, setNasabah] = useState<NasabahRow[]>([])
+    const [nasabah, setNasabah] = useState<NasabahRowData[]>([])
     const [pageState, setPageState] = useState<PageState>("loading")
     const [errorMsg, setErrorMsg] = useState<string | null>(null)
     const [search, setSearch] = useState("")
     const [deletingId, setDeletingId] = useState<string | null>(null)
     const [confirmId, setConfirmId] = useState<string | null>(null)
+
+    // Create form
+    const [showCreate, setShowCreate] = useState(false)
+    const [form, setForm] = useState<FormState>(EMPTY_FORM)
+    const [creating, setCreating] = useState(false)
+    const [createBanner, setCreateBanner] = useState<string | null>(null)
+    const [createError, setCreateError] = useState<string | null>(null)
+    const [createFieldErrors, setCreateFieldErrors] = useState<Record<string, string[]>>({})
 
     function load() {
         const token = localStorage.getItem("token")
@@ -61,6 +74,41 @@ export default function AdminNasabahPage() {
         }
     }
 
+    async function handleCreate(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+        setCreateBanner(null)
+        setCreateError(null)
+        setCreateFieldErrors({})
+        setCreating(true)
+        try {
+            await postRegister(form)
+            setCreateBanner(`Nasabah ${form.nama} berhasil didaftarkan`)
+            setForm(EMPTY_FORM)
+            // Reload list to surface the new row + correct ordering.
+            const token = localStorage.getItem("token")
+            if (token) {
+                const res = await getAllNasabah(token)
+                setNasabah(res.data)
+            }
+        } catch (err: unknown) {
+            if (err instanceof ApiError && err.hasFieldErrors()) {
+                setCreateFieldErrors(err.details!.fieldErrors!)
+                setCreateError(err.details?.formErrors?.[0] ?? null)
+            } else {
+                setCreateError(err instanceof Error ? err.message : "Gagal mendaftarkan nasabah")
+            }
+        } finally {
+            setCreating(false)
+        }
+    }
+
+    function toggleCreate() {
+        setShowCreate((v) => !v)
+        setCreateBanner(null)
+        setCreateError(null)
+        setCreateFieldErrors({})
+    }
+
     if (pageState === "loading") return <PageSkeleton />
     if (pageState === "error") return <div className="flex items-center justify-center min-h-screen text-error">{errorMsg}</div>
 
@@ -80,16 +128,64 @@ export default function AdminNasabahPage() {
                             <h2 className="font-outfit text-3xl font-bold text-on-background">Data Nasabah</h2>
                             <p className="text-base text-on-surface-variant mt-1">{nasabah.length} nasabah terdaftar</p>
                         </div>
-                        <div className="relative w-full md:w-80">
-                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
-                            <input
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Cari nama, NIK, atau email..."
-                                className="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-sm focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
-                            />
+                        <div className="flex items-center gap-3 w-full md:w-auto">
+                            <div className="relative w-full md:w-80">
+                                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+                                <input
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    placeholder="Cari nama, NIK, atau email..."
+                                    className="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-sm focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none"
+                                />
+                            </div>
+                            <button
+                                onClick={toggleCreate}
+                                className="px-4 py-2.5 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors flex items-center gap-1.5 whitespace-nowrap"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">{showCreate ? "close" : "person_add"}</span>
+                                {showCreate ? "Tutup" : "Tambah Nasabah"}
+                            </button>
                         </div>
                     </header>
+
+                    {showCreate && (
+                        <div className="glass-card border border-outline-variant rounded-xl p-6 mb-6">
+                            <h3 className="font-outfit text-xl font-semibold mb-2 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-primary">person_add</span>
+                                Tambah Nasabah Baru
+                            </h3>
+                            <p className="text-sm text-on-surface-variant mb-4">
+                                Membuat akun nasabah baru sekaligus akun login (password diset di sini).
+                            </p>
+
+                            {createBanner && (
+                                <div className="mb-4 p-3 bg-primary/10 border border-primary/20 text-primary rounded-lg text-sm flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                                    {createBanner}
+                                </div>
+                            )}
+                            {createError && (
+                                <div className="mb-4 p-3 bg-error-container text-on-error-container rounded-lg text-sm">{createError}</div>
+                            )}
+
+                            <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <CreateField label="NIK" name="nik" value={form.nik} onChange={(v) => setForm((f) => ({ ...f, nik: v.replace(/\D/g, "").slice(0, 16) }))} placeholder="16 digit" pattern="\\d{16}" inputMode="numeric" maxLength={16} errors={createFieldErrors.nik} disabled={creating} />
+                                <CreateField label="Nama Lengkap" name="nama" value={form.nama} onChange={(v) => setForm((f) => ({ ...f, nama: v }))} placeholder="Nama sesuai KTP" errors={createFieldErrors.nama} disabled={creating} />
+                                <CreateField label="Email" name="email" type="email" value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} placeholder="contoh@email.com" errors={createFieldErrors.email} disabled={creating} />
+                                <CreateField label="Nomor HP" name="nomorHp" type="tel" value={form.nomorHp} onChange={(v) => setForm((f) => ({ ...f, nomorHp: v }))} placeholder="08xxxxxxxxxx" pattern="08[0-9]{8,11}" errors={createFieldErrors.nomorHp} disabled={creating} />
+                                <CreateField label="Password" name="password" type="password" value={form.password} onChange={(v) => setForm((f) => ({ ...f, password: v }))} placeholder="Minimal 8 karakter" minLength={8} maxLength={72} errors={createFieldErrors.password} disabled={creating} />
+                                <div className="md:col-span-2 flex items-center gap-3 pt-2">
+                                    <button type="submit" disabled={creating} className="px-5 py-2.5 bg-primary text-on-primary rounded-lg font-semibold text-sm hover:bg-primary/90 disabled:opacity-50 flex items-center gap-2">
+                                        {creating && <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>}
+                                        Simpan
+                                    </button>
+                                    <button type="button" onClick={() => { setForm(EMPTY_FORM); setCreateError(null); setCreateFieldErrors({}) }} disabled={creating} className="px-5 py-2.5 border border-outline-variant rounded-lg font-semibold text-sm hover:bg-surface-container disabled:opacity-50">
+                                        Reset
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    )}
 
                     <div className="glass-card border border-outline-variant rounded-xl overflow-hidden">
                         {filtered.length === 0 ? (
@@ -109,28 +205,15 @@ export default function AdminNasabahPage() {
                                     </thead>
                                     <tbody className="divide-y divide-outline-variant/30">
                                         {filtered.map((n) => (
-                                            <tr key={n.id} className="hover:bg-surface-container-low transition-colors">
-                                                <td className="px-6 py-4 text-sm font-semibold">{n.nama}</td>
-                                                <td className="px-6 py-4 text-sm font-mono text-outline">{n.nik}</td>
-                                                <td className="px-6 py-4 text-sm">{n.email}</td>
-                                                <td className="px-6 py-4 text-sm">{n.nomorHp}</td>
-                                                <td className="px-6 py-4 text-sm text-on-surface-variant">{formatDate(n.createdAt)}</td>
-                                                <td className="px-6 py-4 text-right">
-                                                    {confirmId === n.id ? (
-                                                        <div className="flex items-center gap-2 justify-end">
-                                                            <button onClick={() => handleDelete(n.id)} disabled={deletingId === n.id} className="px-3 py-1.5 bg-error text-on-error rounded-lg text-xs font-semibold hover:opacity-90 disabled:opacity-50 flex items-center gap-1">
-                                                                {deletingId === n.id && <span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>}
-                                                                Hapus
-                                                            </button>
-                                                            <button onClick={() => setConfirmId(null)} className="px-3 py-1.5 border border-outline-variant rounded-lg text-xs font-semibold hover:bg-surface-container">Batal</button>
-                                                        </div>
-                                                    ) : (
-                                                        <button onClick={() => setConfirmId(n.id)} className="text-error hover:bg-error/10 rounded-lg p-2 transition-colors" title="Hapus nasabah">
-                                                            <span className="material-symbols-outlined text-[20px]">delete</span>
-                                                        </button>
-                                                    )}
-                                                </td>
-                                            </tr>
+                                            <NasabahRow
+                                                key={n.id}
+                                                nasabah={n}
+                                                confirmingId={confirmId}
+                                                deletingId={deletingId}
+                                                onAskDelete={setConfirmId}
+                                                onCancelDelete={() => setConfirmId(null)}
+                                                onConfirmDelete={handleDelete}
+                                            />
                                         ))}
                                     </tbody>
                                 </table>
@@ -139,6 +222,55 @@ export default function AdminNasabahPage() {
                     </div>
                 </div>
             </main>
+        </div>
+    )
+}
+
+function CreateField({
+    label, name, value, onChange, placeholder, type = "text", pattern, inputMode, maxLength, minLength, errors, disabled,
+}: {
+    label: string
+    name: string
+    value: string
+    onChange: (v: string) => void
+    placeholder?: string
+    type?: string
+    pattern?: string
+    inputMode?: "text" | "numeric" | "tel" | "email"
+    maxLength?: number
+    minLength?: number
+    errors?: string[]
+    disabled?: boolean
+}) {
+    const hasError = !!errors && errors.length > 0
+    return (
+        <div className="space-y-1">
+            <label htmlFor={`create-${name}`} className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant">{label}</label>
+            <input
+                id={`create-${name}`}
+                name={name}
+                type={type}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                pattern={pattern}
+                inputMode={inputMode}
+                maxLength={maxLength}
+                minLength={minLength}
+                required
+                disabled={disabled}
+                className={`w-full px-3 py-2.5 rounded-lg border bg-surface text-sm outline-none transition-all disabled:opacity-60 ${hasError ? "border-error focus:ring-2 focus:ring-error/20" : "border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/10"}`}
+            />
+            {hasError && (
+                <ul className="text-xs text-error space-y-0.5 pl-1">
+                    {errors!.map((msg, i) => (
+                        <li key={i} className="flex items-start gap-1">
+                            <span className="material-symbols-outlined text-[14px] mt-0.5">error</span>
+                            <span>{msg}</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     )
 }

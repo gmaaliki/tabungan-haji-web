@@ -105,10 +105,12 @@ export default function AdminOverviewPage() {
                                         {recent.map((r) => (
                                             <tr key={r.id} className="hover:bg-surface-container-low transition-colors">
                                                 <td className="px-6 py-4">
-                                                    <p className="text-sm font-semibold">{r.nasabah.nama}</p>
+                                                    <Link href={`/admin/nasabah/${r.nasabah.id}`} className="text-sm font-semibold hover:text-primary hover:underline">{r.nasabah.nama}</Link>
                                                     <p className="text-xs text-outline font-mono">{r.nasabah.nik}</p>
                                                 </td>
-                                                <td className="px-6 py-4 text-sm font-mono">{r.nomorRekening}</td>
+                                                <td className="px-6 py-4">
+                                                    <Link href={`/admin/rekening/${r.id}`} className="text-sm font-mono hover:text-primary hover:underline">{r.nomorRekening}</Link>
+                                                </td>
                                                 <td className="px-6 py-4 text-sm font-bold text-primary">{formatRupiah(toNumber(r.saldo))}</td>
                                                 <td className="px-6 py-4"><StatusPill status={r.status} /></td>
                                             </tr>

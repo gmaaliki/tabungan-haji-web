@@ -2,7 +2,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { postRegister } from "@/lib/api"
+import { ApiError, postRegister } from "@/lib/api"
 
 type Status = "idle" | "loading" | "success"
 
@@ -17,11 +17,13 @@ export default function RegisterPage() {
     const router = useRouter()
     const [status, setStatus] = useState<Status>("idle")
     const [error, setError] = useState<string | null>(null)
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({})
     const [showPassword, setShowPassword] = useState(false)
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setError(null)
+        setFieldErrors({})
         setStatus("loading")
 
         const form = new FormData(e.currentTarget)
@@ -36,8 +38,14 @@ export default function RegisterPage() {
             setStatus("success")
             setTimeout(() => router.push("/login?registered=1"), 1500)
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : "Pendaftaran gagal"
-            setError(msg)
+            if (err instanceof ApiError && err.hasFieldErrors()) {
+                setFieldErrors(err.details!.fieldErrors!)
+                // Keep the top banner concise when field-level messages are shown.
+                setError(err.details?.formErrors?.[0] ?? null)
+            } else {
+                const msg = err instanceof Error ? err.message : "Pendaftaran gagal"
+                setError(msg)
+            }
             setStatus("idle")
         }
     }
@@ -124,7 +132,7 @@ export default function RegisterPage() {
 
                                 <form className="space-y-4" onSubmit={handleSubmit}>
                                     {/* NIK */}
-                                    <Field icon="badge" label="Nomor Induk Kependudukan (NIK)">
+                                    <Field icon="badge" label="Nomor Induk Kependudukan (NIK)" errors={fieldErrors.nik}>
                                         <input
                                             name="nik"
                                             type="text"
@@ -144,7 +152,7 @@ export default function RegisterPage() {
                                     </Field>
 
                                     {/* Nama */}
-                                    <Field icon="person" label="Nama Lengkap">
+                                    <Field icon="person" label="Nama Lengkap" errors={fieldErrors.nama}>
                                         <input
                                             name="nama"
                                             type="text"
@@ -156,7 +164,7 @@ export default function RegisterPage() {
                                     </Field>
 
                                     {/* Email */}
-                                    <Field icon="mail" label="Alamat Email">
+                                    <Field icon="mail" label="Alamat Email" errors={fieldErrors.email}>
                                         <input
                                             name="email"
                                             type="email"
@@ -168,7 +176,7 @@ export default function RegisterPage() {
                                     </Field>
 
                                     {/* Nomor HP */}
-                                    <Field icon="call" label="Nomor Handphone">
+                                    <Field icon="call" label="Nomor Handphone" errors={fieldErrors.nomorHp}>
                                         <input
                                             name="nomorHp"
                                             type="tel"
@@ -182,7 +190,7 @@ export default function RegisterPage() {
                                     </Field>
 
                                     {/* Password */}
-                                    <Field icon="lock" label="Password">
+                                    <Field icon="lock" label="Password" errors={fieldErrors.password}>
                                         <input
                                             name="password"
                                             type={showPassword ? "text" : "password"}
@@ -247,16 +255,27 @@ export default function RegisterPage() {
 const inputCls =
     "w-full pl-10 pr-4 py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all bg-surface text-base disabled:opacity-60"
 
-function Field({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) {
+function Field({ icon, label, children, errors }: { icon: string; label: string; children: React.ReactNode; errors?: string[] }) {
+    const hasError = !!errors && errors.length > 0
     return (
         <div className="space-y-1">
             <label className="block text-sm font-medium text-on-surface-variant">{label}</label>
-            <div className="relative group">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors text-[20px]">
+            <div className={`relative group ${hasError ? "[&_input]:!border-error [&_input]:!focus:ring-error/20" : ""}`}>
+                <span className={`material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 transition-colors text-[20px] ${hasError ? "text-error" : "text-outline group-focus-within:text-primary"}`}>
                     {icon}
                 </span>
                 {children}
             </div>
+            {hasError && (
+                <ul className="text-xs text-error space-y-0.5 mt-1 pl-1">
+                    {errors!.map((msg, i) => (
+                        <li key={i} className="flex items-start gap-1">
+                            <span className="material-symbols-outlined text-[14px] mt-0.5">error</span>
+                            <span>{msg}</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     )
 }

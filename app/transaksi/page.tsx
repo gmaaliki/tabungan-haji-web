@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { Sidebar } from "@/component/sidebar"
 import { TopNav } from "@/component/topnav"
 import {
@@ -169,7 +170,7 @@ export default function TransaksiPage() {
                                 <table className="w-full text-left">
                                     <thead className="bg-surface-container-low border-b border-outline-variant">
                                         <tr>
-                                            {["Waktu", "Jenis", "Referensi", "Metode", "Nominal", "Saldo Sesudah"].map((h) => (
+                                            {["Waktu", "Jenis", "Referensi", "Metode", "Nominal", "Saldo Sesudah", ""].map((h) => (
                                                 <th key={h} className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">{h}</th>
                                             ))}
                                         </tr>
@@ -193,6 +194,11 @@ export default function TransaksiPage() {
                                                     {trx.jenis === "SETORAN" ? "+" : "−"}{formatRupiah(toNumber(trx.nominal))}
                                                 </td>
                                                 <td className="px-6 py-4 text-sm font-semibold text-on-surface">{formatRupiah(toNumber(trx.saldoSesudah))}</td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <Link href={`/transaksi/${trx.id}`} className="text-primary text-sm font-semibold hover:underline inline-flex items-center gap-1">
+                                                        Detail <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                                                    </Link>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>

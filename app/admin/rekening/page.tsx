@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { AdminSidebar } from "@/component/admin-sidebar"
 import { TopNav } from "@/component/topnav"
 import {
@@ -165,6 +166,9 @@ export default function AdminRekeningPage() {
                                                         </div>
                                                     ) : (
                                                         <div className="flex items-center gap-1">
+                                                            <Link href={`/admin/rekening/${r.id}`} className="text-primary hover:bg-primary/10 rounded-lg p-2 transition-colors" title="Lihat detail">
+                                                                <span className="material-symbols-outlined text-[20px]">open_in_new</span>
+                                                            </Link>
                                                             <button onClick={() => setEditId(r.id)} disabled={r.status === "TUTUP"} className="text-primary hover:bg-primary/10 rounded-lg p-2 transition-colors disabled:opacity-30 disabled:cursor-not-allowed" title="Ubah status">
                                                                 <span className="material-symbols-outlined text-[20px]">edit</span>
                                                             </button>
