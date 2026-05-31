@@ -10,6 +10,15 @@ export function LoginForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
 
+  // Visiting /login always means "start fresh": clear any stale token left over
+  // from a previous session (e.g. after a DB reset that invalidated the JWT's
+  // sub), so AuthGuard can't bounce us back into a broken dashboard.
+  useEffect(() => {
+    try {
+      localStorage.removeItem("token");
+    } catch {}
+  }, []);
+
   useEffect(() => {
     const createOrb = () => {
       const orb = document.createElement("div");
